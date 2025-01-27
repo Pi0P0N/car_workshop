@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use App\Models\User;
 use App\Enums\RolesEnum;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,8 +20,9 @@ class CheckIfClientsDataMiddleware
     {
         $user = Auth::user();
         $clientId = $request->route('id');
+        $client = User::find($clientId);
 
-        if ($user->id == $clientId || (RolesEnum::isWorkingHere() && $user->role == RolesEnum::Customer->value)) {
+        if ($user->id == $clientId || (RolesEnum::isWorkingHere() && $client->role == RolesEnum::Customer->value)) {
             return $next($request);
         }
 

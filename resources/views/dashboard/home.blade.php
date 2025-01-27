@@ -11,7 +11,7 @@
             <div class="col">
                 <div class="card h-100">
                     <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">{{ $cardInfo->name }}</h5>
+                        <h5 class="card-title fw-bold">{{ $cardInfo->name }}</h5>
                         <p class="card-text flex-grow-1">{{ $cardInfo->description }}</p>
                         <a href="/addRepair" class="btn btn-primary mt-auto">Umów się na wizytę</a>
                     </div>

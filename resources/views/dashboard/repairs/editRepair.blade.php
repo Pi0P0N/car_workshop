@@ -16,6 +16,7 @@
                                 <option value="{{ $status }}" @if($status == $repair->status->value) selected @endif>{{ App\Enums\RepairStatusEnum::getLabel($status->value) }}</option>
                             @endforeach
                         </select>
+                    </div>
                     <div class="form-group mb-3">
                         <label for="scheduled_date">Data</label>
                         <input type="date" class="form-control mt-1" id="scheduled_date" name="scheduled_date" value="{{ $repair->scheduled_date }}" required>

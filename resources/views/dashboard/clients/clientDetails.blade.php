@@ -8,7 +8,7 @@
             <div class="col-md-12">
                 <div class="form-group my-1">
                     <label for="name">Imię i Nazwisko</label>
-                    <input type="text" class="form-control" id="name" name="name" value="{{ $client->name }}" disabled>
+                    <input type="text" class="form-control" id="name" name="name" value="{{ $client->first_name }} {{ $client->last_name }}" disabled>
                 </div>
                 <div class="form-group my-1">
                     <label for="email">Adres e-mail</label>

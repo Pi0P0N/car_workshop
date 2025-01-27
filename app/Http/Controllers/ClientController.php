@@ -12,37 +12,51 @@ class ClientController extends Controller
     {
         return view('employee.dashboard');
     }
-    // FOR EMPLOYEES START
+
     public function getClientsList()
     {
-        //find all users with role = Roles::Customer
         $clients = User::where('role', RolesEnum::Customer->value)->get();
-        //pass the clients to the view
         return view('dashboard.clients.clientsList', ['clients' => $clients]);
-        // return view('dashboard.clients.clientsList');
     }
     public function showClientDetails($id)
     {
-        //find the user with the given id
         $client = User::find($id);
-        //find all repairs for the user
         $repairs = $client->repairs;
-        //pass the client to the view
+        $repairs = $repairs->sortBy('scheduled_date')->sortBy('scheduled_time');
         return view('dashboard.clients.clientDetails', ['client' => $client, 'repairs' => $repairs]);
     }
 
     public function destroy($id)
     {
-        //find the user with the given id
         $client = User::find($id);
-        //delete the user
         $client->delete();
-        //redirect to the clients list
         return redirect('/clients');
     }
 
-    // FOR EMPLOYEES STOP
+    public function edit($id)
+    {
+        $client = User::find($id);
+        return view('dashboard.clients.editClient', ['client' => $client]);
+    }
 
-    // FOR CLIENTS START
+    public function update(Request $request)
+    {
+        $request->validate([
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'email' => 'required|email',
+            'role' => 'required',
+            'phone_number' => 'required',
+        ]);
 
+        $client = User::find($request->input('id'));
+        $client->first_name = $request->input('first_name');
+        $client->last_name = $request->input('last_name');
+        $client->email = $request->input('email');
+        $client->role = $request->input('role');
+
+        $client->save();
+
+        return redirect()->route('clients.list');
+    }
 }

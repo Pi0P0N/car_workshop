@@ -39,4 +39,23 @@ enum RolesEnum: int
     {
         return self::isEmployee() || self::isManager();
     }
+
+    public static function getAll()
+    {
+        return [
+            self::Customer->value,
+            self::Employee->value,
+            self::Manager->value
+        ];
+    }
+
+    public static function getLabel(int $role): string
+    {
+        return match ($role) {
+            self::Customer->value => 'Klient',
+            self::Employee->value => 'Pracownik',
+            self::Manager->value => 'Manager',
+            default => 'Unknown',
+        };
+    }
 }

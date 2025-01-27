@@ -24,12 +24,12 @@ class LoginController extends Controller
         if (Auth::attempt($request->only('email', 'password'), $request->filled('remember'))) {
             $request->session()->regenerate();
 
-            return redirect()->intended('/');
+            return redirect()->intended('/')->with('success', 'Zalogowano pomyślnie.');
         }
 
-        throw ValidationException::withMessages([
-            'email' => [trans('dashboard.failed')],
-        ]);
+        return redirect()->back()->withErrors([
+            'email' => trans('dashboard.failed'),
+        ])->withInput($request->only('email', 'remember'));
     }
 
     public function logout(Request $request)
@@ -39,6 +39,6 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect('/')->with('success', 'Wylogowano pomyślnie.');
     }
 }

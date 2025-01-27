@@ -32,8 +32,35 @@
                             <td>{{ App\Enums\RepairStatusEnum::getLabel($repair->status->value) }}</td>
                             <td>{{ $repair->client->first_name }} {{ $repair->client->last_name }}</td>
                             <td><a href="tel:{{ $repair->client->phone_number }}">{{ $repair->client->phone_number }}</a></td>
-                            <td><a href="{{ route('repairs.edit', ['id' => $repair->id]) }}" class="btn btn-primary">Edytuj</a></td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{{ route('repairs.edit', ['id' => $repair->id]) }}" class="btn btn-warning">Edytuj</a>
+                                    {{-- <a href="{{ route('repairs.destroy', ['id' => $repair->id]) }}" class="btn btn-danger" 
+                                       onclick="event.preventDefault(); document.getElementById('delete-form-{{ $repair->id }}').submit();">
+                                        Usuń
+                                    </a> --}}
+                                    @include('dashboard.utilities.openModalButton', [
+                                        'btnText' => 'Usuń',
+                                        'btnClass' => 'btn-danger',
+                                        'modalId' => 'deleteRepairModal-' . $repair->id,
+                                    ])
+                                </div>
+                                <form id="delete-form-{{ $repair->id }}" action="{{ route('repairs.destroy', ['id' => $repair->id]) }}" method="POST" style="display: none;">
+                                    @csrf
+                                    @method('DELETE')
+                                </form>
+                            </td>
                         </tr>
+                        
+                    @include('dashboard.utilities.modal', [
+                        'modalId' => 'deleteRepairModal-' . $repair->id,
+                        'modalLabelId' => 'deleteRepairModalLabel-' . $repair->id,
+                        'modalTitle' => 'Usuń Naprawę',
+                        'modalContent' => 'Czy na pewno chcesz usunąć tę naprawę?',
+                        'modalSaveText' => 'Usuń',
+                        'buttonStyle' => 'btn-danger',
+                        'formId' => 'delete-form-' . $repair->id
+                    ])
                     @endforeach
                 </tbody>
             </table>

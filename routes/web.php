@@ -1,5 +1,4 @@
 <?php
-use App\Http\Middleware\IsWorkingHereMiddleware;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Middleware\ClientMiddleware;
@@ -10,7 +9,9 @@ use App\Http\Controllers\RepairsController;
 use App\Http\Middleware\EmployeeMiddleware;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\RepairTypeController;
 use App\Http\Controllers\UnauthorizedController;
+use App\Http\Middleware\IsWorkingHereMiddleware;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Middleware\CheckIfClientsDataMiddleware;
 
@@ -42,9 +43,6 @@ Route::middleware([EmployeeMiddleware::class])->group(function () {
      */
     
     Route::get('/employeePanel', [EmployeeController::class, 'index'])->name('employeePanel');
-
-    Route::get('/clients/{id}', [ClientController::class, 'showClientDetails'])->name('clients.show')->middleware(CheckIfClientsDataMiddleware::class)->withoutMiddleware(EmployeeMiddleware::class);
-    Route::delete('/clients/{id}', [ClientController::class, 'destroy'])->name('clients.destroy');
     /**
      * Employee routes STOP
      */
@@ -75,6 +73,19 @@ Route::middleware([ManagerMiddleware::class])->group(function () {
      */
     
     Route::get('/managerPanel', [ManagerController::class, 'index'])->name('managerPanel');
+    Route::get('/listRepairTypes', [RepairTypeController::class, 'listRepairTypes'])->name('repairTypes.list');
+    Route::delete('/listRepairTypes/{id}', [RepairTypeController::class, 'destroy'])->name('repairTypes.destroy');
+    Route::get('/addRepairType', [RepairTypeController::class, 'create'])->name('repairTypes.create');
+    Route::post('/addRepairType', [RepairTypeController::class, 'store'])->name('repairTypes.store');
+    Route::get('/editRepairType/{id}', [RepairTypeController::class, 'edit'])->name('repairTypes.edit');
+    Route::put('/editRepairType/{id}', [RepairTypeController::class, 'update'])->name('repairTypes.update');
+
+    Route::get('/listEmployees', [EmployeeController::class, 'listEmployees'])->name('employees.list');
+    Route::get('/editEmployee/{id}', [EmployeeController::class, 'edit'])->name('employees.edit');
+    Route::put('/editEmployee/{id}', [EmployeeController::class, 'update'])->name('employees.update');
+    Route::delete('/editEmployee/{id}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
+    Route::get('/clients/edit/{id}', [ClientController::class, 'edit'])->name('clients.edit');
+    Route::put('/clients/edit/{id}', [ClientController::class, 'update'])->name('clients.update');
     /**
      * Manager routes STOP
      */
@@ -88,6 +99,10 @@ Route::middleware([IsWorkingHereMiddleware::class])->group(function () {
     Route::get('/repairs', [RepairsController::class, 'listRepairsForDate'])->name('repairs.list');
     Route::get('/repairs/{id}', [RepairsController::class, 'edit'])->name('repairs.edit');
     Route::put('/repairs/{id}', [RepairsController::class, 'update'])->name('repairs.update');
+    Route::delete('/repairs/{id}', [RepairsController::class, 'destroy'])->name('repairs.destroy');
+    Route::get('/clients/preview/{id}', [ClientController::class, 'showClientDetails'])->name('clients.show')->middleware(CheckIfClientsDataMiddleware::class)->withoutMiddleware(IsWorkingHereMiddleware::class);
+    Route::delete('/clients/{id}', [ClientController::class, 'destroy'])->name('clients.destroy');
+
     /**
      * IsWorkingHere routes STOP
      */

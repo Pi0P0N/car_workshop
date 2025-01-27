@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\RolesEnum;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -23,7 +24,6 @@ class RegisterController extends Controller
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'role' => ['required', 'integer', 'in:' . implode(',', array_column(\App\Enums\RolesEnum::cases(), 'value'))],
             'phone_number' => ['required', 'regex:/^\d{9}$/'],
         ]);
     }
@@ -35,7 +35,7 @@ class RegisterController extends Controller
             'last_name' => $data['last_name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'role' => $data['role'],
+            'role' => RolesEnum::Customer->value,
             'phone_number' => $data['phone_number'],
         ]);
         return $user;
@@ -49,6 +49,6 @@ class RegisterController extends Controller
 
         Auth::login($user);
 
-        return redirect('/');
+        return redirect()->route('home');
     }
 }

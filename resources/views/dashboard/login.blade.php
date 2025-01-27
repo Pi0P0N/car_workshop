@@ -9,15 +9,15 @@
                 <div class="card-body">
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
-                        <div class="form-group">
+                        <div class="form-group mb-3">
                             <label for="email">{{ __('Adres e-mail') }}</label>
-                            <input type="email" class="form-control" id="email" name="email" required autofocus>
+                            <input type="email" class="form-control mt-1" id="email" name="email" required autofocus>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group mb-3">
                             <label for="password">{{ __('Hasło') }}</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
+                            <input type="password" class="form-control mt-1" id="password" name="password" required>
                         </div>
-                        <div class="form-group form-check my-3">
+                        <div class="form-group mb-3 form-check my-3">
                             <input type="checkbox" class="form-check-input" id="remember" name="remember">
                             <label class="form-check-label" for="remember">{{ __('Zapamiętaj mnie') }}</label>
                         </div>

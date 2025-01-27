@@ -8,26 +8,26 @@
                 <div class="card-body">
                     <form method="POST" action="{{ route('storeRepair') }}">
                         @csrf
-                        <div class="form-group">
+                        <div class="form-group mb-3">
                             <label for="scheduled_date">Data</label>
-                            <input type="date" class="form-control" id="scheduled_date" name="scheduled_date" required>
+                            <input type="date" class="form-control mt-1" id="scheduled_date" name="scheduled_date" required>
                         </div>
-                        <div class="form-group mt-3">
+                        <div class="form-group mb-3">
                             <label for="repair_type">Typ usługi</label>
-                            <select name="repair_type" id="repair_type" class="form-control" required>
+                            <select name="repair_type" id="repair_type" class="form-control mt-1" required>
                                 @foreach ($repairTypes as $repairType)
                                     <option value="{{ $repairType->id }}">{{ $repairType->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="form-group mt-3">
+                        <div class="form-group mb-3">
                             <label for="scheduled_time">Godzina</label>
-                            <select class="form-control" id="scheduled_time" name="scheduled_time" required>
+                            <select class="form-control mt-1" id="scheduled_time" name="scheduled_time" required>
                             </select>
                         </div>
-                        <div class="form-group mt-3">
+                        <div class="form-group mb-3">
                             <label for="description">Opis</label>
-                            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                            <textarea class="form-control mt-1" id="description" name="description" rows="3" required></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary mt-3" id="submit_button">Dodaj Naprawę</button>
                     </form>

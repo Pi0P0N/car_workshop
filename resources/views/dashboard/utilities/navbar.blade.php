@@ -18,7 +18,7 @@
                         </div>
                     </li>  
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Strona Główna</a>
+                        <a class="nav-link" href="{{ route('home') }}">Strona Główna</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/uslugi">Usługi</a>
@@ -28,17 +28,17 @@
                     </li>
                     @if(Auth::check() && App\Enums\RolesEnum::isEmployee())
                         <li class="nav-item">
-                            <a class="nav-link" href="/employeePanel">Panel Pracownika</a>
+                            <a class="nav-link" href="{{ route('employeePanel') }}">Panel Pracownika</a>
                         </li>
                     @endif
                     @if(Auth::check() && App\Enums\RolesEnum::isManager())
                         <li class="nav-item">
-                            <a class="nav-link" href="/managerPanel">Panel Menadżera</a>
+                            <a class="nav-link" href="{{ route('managerPanel') }}">Panel Menadżera</a>
                         </li>
                     @endif
                     @if(Auth::check() && App\Enums\RolesEnum::isCustomer())
                         <li class="nav-item">
-                            <a class="nav-link" href="/employeePanel">Moje konto</a>
+                            <a class="nav-link" href="{{ route('clients.show', ['id' => Auth::user()->id]) }}">Moje konto</a>
                         </li>
                     @endif
                     @guest

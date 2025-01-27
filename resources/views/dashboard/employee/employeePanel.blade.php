@@ -15,7 +15,7 @@
         <div class="card">
             <div class="card-header">Naprawy</div>
             <div class="card-body">
-                <p>Lista napraw</p>
+                <p>Przejrzyj listę napraw na dowolny dzień</p>
                 <a href="{{ route('repairs.list') }}" class="btn btn-primary">Lista Napraw</a>
             </div>
         </div>
@@ -26,7 +26,7 @@
                 <div class="card-header">Pracownicy</div>
                 <div class="card-body">
                     <p>Przejrzyj listę pracowników</p>
-                    {{-- <a href="{{ route('repairs.index') }}" class="btn btn-primary">Lista Napraw</a> --}}
+                    <a href="{{ route('employees.list') }}" class="btn btn-primary">Lista pracowników</a>
                 </div>
             </div>
         </div>
@@ -35,7 +35,7 @@
                 <div class="card-header">Usługi</div>
                 <div class="card-body">
                     <p>Zarządzaj dostępnymi usługami</p>
-                    {{-- <a href="{{ route('repairs.index') }}" class="btn btn-primary">Lista Napraw</a> --}}
+                    <a href="{{ route('repairTypes.list') }}" class="btn btn-primary">Zarządzaj usługami</a>
                 </div>
             </div>
         </div>

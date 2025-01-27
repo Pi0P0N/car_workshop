@@ -112,9 +112,13 @@ class RepairsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Repairs $repairs)
+    public function destroy(int $id)
     {
-        //
+        $repairs = Repairs::find($id);
+        if ($repairs) {
+            $repairs->delete();
+        }
+        return redirect()->route('repairs.list');
     }
     public function getAvailableRepairTimes(Request $request)
     {
