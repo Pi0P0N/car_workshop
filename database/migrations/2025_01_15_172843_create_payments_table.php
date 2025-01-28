@@ -15,17 +15,12 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            // repair_id
             $table->unsignedBigInteger('repair_id');
             $table->foreign('repair_id')->references('id')->on('repairs');
-            // payment status from PaymentStatusEnum
             $table->integer('status');
-            // payment amount
             $table->decimal('amount', 8, 2);
-            // payment client
             $table->unsignedBigInteger('client_id');
             $table->foreign('client_id')->references('id')->on('users');
-            // payment employee
             $table->unsignedBigInteger('employee_id');
             $table->foreign('employee_id')->references('id')->on('users');
         });

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use PaymentStatusEnum;
+use App\Enums\PaymentStatusEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -16,19 +16,13 @@ class Payment extends Model
         'updated_at',
         'repair_id',
         'status',
-        'amount',
-        'client_id',
-        'employee_id'
+        'employee_id',
+        'version'
     ];
 
     public function repair()
     {
         return $this->belongsTo(Repairs::class);
-    }
-
-    public function client()
-    {
-        return $this->belongsTo(User::class);
     }
 
     public function employee()

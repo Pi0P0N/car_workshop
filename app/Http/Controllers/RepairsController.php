@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PaymentStatusEnum;
 use App\Enums\RepairStatusEnum;
 use App\Models\Repairs;
 use App\Models\RepairType;
@@ -53,6 +54,16 @@ class RepairsController extends Controller
             $repair->status = RepairStatusEnum::Pending;
             $repair->save();
 
+            // Add payment with status 1
+            $payment = new \App\Models\Payment();
+            $payment->repair_id = $repair->id;
+            $payment->employee_id = null;
+            $payment->status = PaymentStatusEnum::Pending->value;
+            $payment->version = 1;
+            $payment->created_at = now();
+            $payment->updated_at = now();
+            $payment->save();
+
             return redirect('/')->with('success', 'Naprawa została pomyślnie dodana.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Dodanie naprawy nie powiodło się. Proszę spróbować ponownie.');
@@ -66,7 +77,8 @@ class RepairsController extends Controller
             $previousDay = date('Y-m-d', strtotime($date . ' -1 day'));
             $nextDay = date('Y-m-d', strtotime($date . ' +1 day'));
             $repairs = app(RepairsService::class)->getRepairsForDate($date);
-            return view('dashboard.repairs.repairsList', ['repairs' => $repairs, 'date' => $date, 'previousDay' => $previousDay, 'nextDay' => $nextDay]);
+            $paymentStatuses = PaymentStatusEnum::getAllWithLabels();
+            return view('dashboard.repairs.repairsList', ['repairs' => $repairs, 'date' => $date, 'previousDay' => $previousDay, 'nextDay' => $nextDay, 'paymentStatuses' => $paymentStatuses]);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Nie udało się pobrać listy napraw. Proszę spróbować ponownie.');
         }

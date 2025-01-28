@@ -28,7 +28,7 @@ class LoginController extends Controller
         }
 
         return redirect()->back()->withErrors([
-            'email' => trans('dashboard.failed'),
+            'email' => trans('Błędne dane logowania.'),
         ])->withInput($request->only('email', 'remember'));
     }
 

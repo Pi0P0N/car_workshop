@@ -40,4 +40,12 @@ class Repairs extends Model
     {
         return $this->belongsTo(User::class, 'employee_id');
     }
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'repair_id');
+    }
+    public function payment()
+    {
+        return $this->hasOne(Payment::class, 'repair_id')->latestOfMany('version');
+    }
 }

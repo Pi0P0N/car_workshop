@@ -18,4 +18,24 @@ enum PaymentStatusEnum: int
             3 => self::Refunded,
         };
     }
+    public static function getLabel(int $value): string
+    {
+        return match ($value) {
+            self::Pending->value => 'Oczekująca',
+            self::Paid->value => 'Opłacona',
+            self::Failed->value => 'Nieudana',
+            self::Refunded->value => 'Zwrócona',
+            default => 'Nieznany',
+        };
+    }
+
+    public static function getAllWithLabels(): array
+    {
+        return [
+            self::Pending->value => self::getLabel(self::Pending->value),
+            self::Paid->value => self::getLabel(self::Paid->value),
+            self::Failed->value => self::getLabel(self::Failed->value),
+            self::Refunded->value => self::getLabel(self::Refunded->value),
+        ];
+    }
 }

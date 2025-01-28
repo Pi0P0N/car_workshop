@@ -5,6 +5,7 @@ use App\Http\Middleware\ClientMiddleware;
 use App\Http\Controllers\ClientController;
 use App\Http\Middleware\ManagerMiddleware;
 use App\Http\Controllers\ManagerController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\RepairsController;
 use App\Http\Middleware\EmployeeMiddleware;
 use App\Http\Controllers\EmployeeController;
@@ -86,6 +87,12 @@ Route::middleware([ManagerMiddleware::class])->group(function () {
     Route::delete('/editEmployee/{id}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
     Route::get('/clients/edit/{id}', [ClientController::class, 'edit'])->name('clients.edit');
     Route::put('/clients/edit/{id}', [ClientController::class, 'update'])->name('clients.update');
+    Route::get('/paymentsPanel', [PaymentController::class, 'index'])->name('payments.panel');
+    Route::get('/paymentsDay', [PaymentController::class, 'listByDate'])->name('payments.day');
+    Route::get('/paymentHistory/{repair_id}', [PaymentController::class, 'history'])->name('payments.history');
+    Route::get('/pendingPayments', [PaymentController::class, 'listPendingPastTerm'])->name('payments.pending');
+    Route::get('/paymentsSummary', [PaymentController::class, 'summarizeMonth'])->name('payments.summary');
+
     /**
      * Manager routes STOP
      */
@@ -102,7 +109,7 @@ Route::middleware([IsWorkingHereMiddleware::class])->group(function () {
     Route::delete('/repairs/{id}', [RepairsController::class, 'destroy'])->name('repairs.destroy');
     Route::get('/clients/preview/{id}', [ClientController::class, 'showClientDetails'])->name('clients.show')->middleware(CheckIfClientsDataMiddleware::class)->withoutMiddleware(IsWorkingHereMiddleware::class);
     Route::delete('/clients/{id}', [ClientController::class, 'destroy'])->name('clients.destroy');
-
+    Route::post('/payments/{payment}', [PaymentController::class, 'update'])->name('payments.update');
     /**
      * IsWorkingHere routes STOP
      */

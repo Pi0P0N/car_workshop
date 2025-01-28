@@ -1,6 +1,5 @@
 @extends('layouts.main')
 @section('content')
-{{-- add panels to go to, for example clients list --}}
 <div class="row">
     <div class="col-md-4 my-3">
         <div class="card">
@@ -36,6 +35,15 @@
                 <div class="card-body">
                     <p>Zarządzaj dostępnymi usługami</p>
                     <a href="{{ route('repairTypes.list') }}" class="btn btn-primary">Zarządzaj usługami</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 my-3">
+            <div class="card">
+                <div class="card-header">Płatności</div>
+                <div class="card-body">
+                    <p>Przeglądaj informacje o płatnościach</p>
+                    <a href="{{ route('payments.panel') }}" class="btn btn-primary">Przeglądaj płatności</a>
                 </div>
             </div>
         </div>
