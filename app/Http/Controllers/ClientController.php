@@ -28,35 +28,48 @@ class ClientController extends Controller
 
     public function destroy($id)
     {
-        $client = User::find($id);
-        $client->delete();
-        return redirect('/clients');
+        try {
+            $client = User::find($id);
+            $client->delete();
+            return redirect('/clients')->with('success', 'Klient został pomyślnie usunięty.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Nie udało się usunąć klienta. Proszę spróbować ponownie.');
+        }
     }
 
     public function edit($id)
     {
-        $client = User::find($id);
-        return view('dashboard.clients.editClient', ['client' => $client]);
+        try {
+            $client = User::find($id);
+            return view('dashboard.clients.editClient', ['client' => $client]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Nie udało się załadować danych klienta. Proszę spróbować ponownie.');
+        }
     }
 
     public function update(Request $request)
     {
-        $request->validate([
+        try {
+            $request->validate([
             'first_name' => 'required',
             'last_name' => 'required',
             'email' => 'required|email',
             'role' => 'required',
             'phone_number' => 'required',
-        ]);
+            ]);
 
-        $client = User::find($request->input('id'));
-        $client->first_name = $request->input('first_name');
-        $client->last_name = $request->input('last_name');
-        $client->email = $request->input('email');
-        $client->role = $request->input('role');
+            $client = User::find($request->input('id'));
+            $client->first_name = $request->input('first_name');
+            $client->last_name = $request->input('last_name');
+            $client->email = $request->input('email');
+            $client->role = $request->input('role');
+            $client->phone_number = $request->input('phone_number');
 
-        $client->save();
+            $client->save();
 
-        return redirect()->route('clients.list');
+            return redirect()->route('clients.list')->with('success', 'Dane klienta zostały zaktualizowane pomyślnie.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Aktualizacja danych klienta nie powiodła się. Proszę spróbować ponownie.');
+        }
     }
 }

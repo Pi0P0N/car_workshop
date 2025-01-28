@@ -30,25 +30,33 @@ class RegisterController extends Controller
 
     protected function create(array $data)
     {
-        $user = User::create([
+        try {
+            $user = User::create([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'role' => RolesEnum::Customer->value,
             'phone_number' => $data['phone_number'],
-        ]);
-        return $user;
+            ]);
+            return $user;
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Nie udało się utworzyć użytkownika. Proszę spróbować ponownie.');
+        }
     }
 
     public function register(Request $request)
     {
-        $this->validator($request->all())->validate();
+        try {
+            $this->validator($request->all())->validate();
 
-        $user = $this->create($request->all());
+            $user = $this->create($request->all());
 
-        Auth::login($user);
+            Auth::login($user);
 
-        return redirect()->route('home');
+            return redirect()->route('home')->with('success', 'Rejestracja zakończona sukcesem.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Rejestracja nie powiodła się. Proszę spróbować ponownie.');
+        }
     }
 }

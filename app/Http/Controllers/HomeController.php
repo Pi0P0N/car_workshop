@@ -9,7 +9,6 @@ class HomeController extends Controller
 {
     public function index()
     {
-        //cards info is from repair_types
         $cardsInfo = RepairType::all();
         return view('dashboard.home', ['cardsInfo' => $cardsInfo]);
     }

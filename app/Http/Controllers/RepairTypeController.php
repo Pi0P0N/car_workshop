@@ -15,9 +15,16 @@ class RepairTypeController extends Controller
 
     public function destroy($id)
     {
-        $repairType = RepairType::find($id);
-        $repairType->delete();
-        return redirect()->route('repairTypes.list');
+        try {
+            $repairType = RepairType::find($id);
+            if (!$repairType) {
+                return redirect()->route('repairTypes.list')->with('error', 'Nie znaleziono typu naprawy.');
+            }
+            $repairType->delete();
+            return redirect()->route('repairTypes.list')->with('success', 'Typ naprawy został pomyślnie usunięty.');
+        } catch (\Exception $e) {
+            return redirect()->route('repairTypes.list')->with('error', 'Usunięcie typu naprawy nie powiodło się. Proszę spróbować ponownie.');
+        }
     }
 
     public function create()
@@ -27,47 +34,66 @@ class RepairTypeController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        try {
+            $request->validate([
             'name' => 'required',
             'price' => 'required|numeric|min:10',
             'duration' => 'required|numeric|min:30|multiple_of:30',
             'description' => 'required',
-        ]);
+            ]);
 
-        $repairType = new RepairType();
-        $repairType->name = $request->input('name');
-        $repairType->price = $request->input('price');
-        $repairType->duration = $request->input('duration');
-        $repairType->description = $request->input('description');
+            $repairType = new RepairType();
+            $repairType->name = $request->input('name');
+            $repairType->price = $request->input('price');
+            $repairType->duration = $request->input('duration');
+            $repairType->description = $request->input('description');
 
-        $repairType->save();
+            $repairType->save();
 
-        return redirect()->route('repairTypes.list');
+            return redirect()->route('repairTypes.list')->with('success', 'Typ naprawy został pomyślnie dodany.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Dodanie typu naprawy nie powiodło się. Proszę spróbować ponownie.');
+        }
     }
 
     public function edit($id)
     {
-        $repairType = RepairType::find($id);
-        return view('dashboard.repairTypes.editRepairType', ['repairType' => $repairType]);
+        try {
+            $repairType = RepairType::find($id);
+            if (!$repairType) {
+                return redirect()->route('repairTypes.list')->with('error', 'Nie znaleziono typu naprawy.');
+            }
+            return view('dashboard.repairTypes.editRepairType', ['repairType' => $repairType]);
+        } catch (\Exception $e) {
+            return redirect()->route('repairTypes.list')->with('error', 'Nie udało się pobrać danych typu naprawy. Proszę spróbować ponownie.');
+        }
     }
 
     public function update(Request $request, $id)
     {
-        $request->validate([
+        try {
+            $request->validate([
             'name' => 'required',
             'price' => 'required|numeric|min:10',
             'duration' => 'required|numeric|min:30|multiple_of:30',
             'description' => 'required',
-        ]);
+            ]);
 
-        $repairType = RepairType::find($id);
-        $repairType->name = $request->input('name');
-        $repairType->price = $request->input('price');
-        $repairType->duration = $request->input('duration');
-        $repairType->description = $request->input('description');
+            $repairType = RepairType::find($id);
+            if (!$repairType) {
+            return redirect()->route('repairTypes.list')->with('error', 'Nie znaleziono typu naprawy.');
+            }
 
-        $repairType->save();
+            $repairType->name = $request->input('name');
+            $repairType->price = $request->input('price');
+            $repairType->duration = $request->input('duration');
+            $repairType->description = $request->input('description');
 
-        return redirect()->route('repairTypes.list');
+            $repairType->save();
+
+            return redirect()->route('repairTypes.list')->with('success', 'Typ naprawy został pomyślnie zaktualizowany.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Aktualizacja typu naprawy nie powiodła się. Proszę spróbować ponownie.');
+        }
     }
 }

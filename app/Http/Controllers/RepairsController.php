@@ -34,34 +34,42 @@ class RepairsController extends Controller
      */
     public function store(StoreRepairsRequest $request)
     {
-        $request->validate([
+        try {
+            $request->validate([
             'repair_type' => 'required|exists:repair_types,id',
             'scheduled_date' => 'required|date',
             'scheduled_time' => 'required',
             'description' => 'required',
-        ]);
+            ]);
 
-        $repair = new Repairs();
-        $repair->client_id = auth()->id();
-        $repair->created_at = now();
-        $repair->updated_at = now();
-        $repair->repair_type = $request->input('repair_type');
-        $repair->scheduled_date = $request->input('scheduled_date');
-        $repair->scheduled_time = $request->input('scheduled_time');
-        $repair->description = $request->input('description');
-        $repair->status = RepairStatusEnum::Pending;
-        $repair->save();
+            $repair = new Repairs();
+            $repair->client_id = auth()->id();
+            $repair->created_at = now();
+            $repair->updated_at = now();
+            $repair->repair_type = $request->input('repair_type');
+            $repair->scheduled_date = $request->input('scheduled_date');
+            $repair->scheduled_time = $request->input('scheduled_time');
+            $repair->description = $request->input('description');
+            $repair->status = RepairStatusEnum::Pending;
+            $repair->save();
 
-        return redirect('/');
+            return redirect('/')->with('success', 'Naprawa została pomyślnie dodana.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Dodanie naprawy nie powiodło się. Proszę spróbować ponownie.');
+        }
     }
 
     public function listRepairsForDate(Request $request)
     {
-        $date = $request->input('date', now()->toDateString());
-        $previousDay = date('Y-m-d', strtotime($date . ' -1 day'));
-        $nextDay = date('Y-m-d', strtotime($date . ' +1 day'));
-        $repairs = app(RepairsService::class)->getRepairsForDate($date);
-        return view('dashboard.repairs.repairsList', ['repairs' => $repairs, 'date' => $date, 'previousDay' => $previousDay, 'nextDay' => $nextDay]);
+        try {
+            $date = $request->input('date', now()->toDateString());
+            $previousDay = date('Y-m-d', strtotime($date . ' -1 day'));
+            $nextDay = date('Y-m-d', strtotime($date . ' +1 day'));
+            $repairs = app(RepairsService::class)->getRepairsForDate($date);
+            return view('dashboard.repairs.repairsList', ['repairs' => $repairs, 'date' => $date, 'previousDay' => $previousDay, 'nextDay' => $nextDay]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Nie udało się pobrać listy napraw. Proszę spróbować ponownie.');
+        }
     }
 
     /**
@@ -77,12 +85,16 @@ class RepairsController extends Controller
      */
     public function edit(int $id)
     {
-        $repairs = Repairs::find($id);
-        if (!$repairs) {
-            return redirect()->route('repairs.list');
+        try {
+            $repairs = Repairs::find($id);
+            if (!$repairs) {
+                return redirect()->route('repairs.list')->with('error', 'Nie znaleziono naprawy.');
+            }
+            $repairTypes = RepairType::all();
+            return view('dashboard.repairs.editRepair', ['repair' => $repairs, 'repairTypes' => $repairTypes]);
+        } catch (\Exception $e) {
+            return redirect()->route('repairs.list')->with('error', 'Nie udało się pobrać danych naprawy. Proszę spróbować ponownie.');
         }
-        $repairTypes = RepairType::all();
-        return view('dashboard.repairs.editRepair', ['repair' => $repairs, 'repairTypes' => $repairTypes]);
     }
 
     /**
@@ -90,23 +102,31 @@ class RepairsController extends Controller
      */
     public function update(UpdateRepairsRequest $request, Repairs $repairs)
     {
-        $request->validate([
+        try {
+            $request->validate([
             'repair_type' => 'required|exists:repair_types,id',
             'scheduled_date' => 'required|date',
             'scheduled_time' => 'required',
             'description' => 'required',
-        ]);
+            ]);
 
-        $repair = Repairs::find($request->input('repair_id'));
-        $repair->status = $request->input('status');
-        $repair->repair_type = $request->input('repair_type');
-        $repair->scheduled_date = $request->input('scheduled_date');
-        $repair->scheduled_time = $request->input('scheduled_time');
-        $repair->description = $request->input('description');
+            $repair = Repairs::find($request->input('repair_id'));
+            if (!$repair) {
+                return redirect()->route('repairs.list')->with('error', 'Nie znaleziono naprawy.');
+            }
 
-        $repair->save();
+            $repair->status = $request->input('status');
+            $repair->repair_type = $request->input('repair_type');
+            $repair->scheduled_date = $request->input('scheduled_date');
+            $repair->scheduled_time = $request->input('scheduled_time');
+            $repair->description = $request->input('description');
 
-        return redirect()->route('repairs.list');
+            $repair->save();
+
+            return redirect()->route('repairs.list')->with('success', 'Naprawa została pomyślnie zaktualizowana.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Aktualizacja naprawy nie powiodła się. Proszę spróbować ponownie.');
+        }
     }
 
     /**
@@ -114,18 +134,28 @@ class RepairsController extends Controller
      */
     public function destroy(int $id)
     {
-        $repairs = Repairs::find($id);
-        if ($repairs) {
-            $repairs->delete();
+        try {
+            $repairs = Repairs::find($id);
+            if ($repairs) {
+                $repairs->delete();
+                return redirect()->route('repairs.list')->with('success', 'Naprawa została pomyślnie usunięta.');
+            } else {
+                return redirect()->route('repairs.list')->with('error', 'Nie znaleziono naprawy.');
+            }
+        } catch (\Exception $e) {
+            return redirect()->route('repairs.list')->with('error', 'Nie udało się usunąć naprawy. Proszę spróbować ponownie.');
         }
-        return redirect()->route('repairs.list');
     }
     public function getAvailableRepairTimes(Request $request)
     {
-        $date = $request->input('date');
-        $repairType = $request->input('repair_type');
-        $repairId = $request->input('repair_id', null);
-        $availableTimes = app(RepairsService::class)->getAvailableRepairTimes($date, $repairType, $repairId);
-        return response()->json($availableTimes);
+        try {
+            $date = $request->input('date');
+            $repairType = $request->input('repair_type');
+            $repairId = $request->input('repair_id', null);
+            $availableTimes = app(RepairsService::class)->getAvailableRepairTimes($date, $repairType, $repairId);
+            return response()->json($availableTimes);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Nie udało się pobrać dostępnych terminów napraw. Proszę spróbować ponownie.');
+        }
     }
 }
