@@ -13,7 +13,7 @@
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title fw-bold">{{ $cardInfo->name }}</h5>
                         <p class="card-text flex-grow-1">{{ $cardInfo->description }}</p>
-                        <a href="/addRepair" class="btn btn-primary mt-auto">Umów się na wizytę</a>
+                        <a href="{{ route('addRepair', ['repair_type' => $cardInfo->id]) }}" class="btn btn-primary mt-auto">Umów się na wizytę</a>
                     </div>
                 </div>
             </div>

@@ -16,7 +16,9 @@
                             <label for="repair_type">Typ usługi</label>
                             <select name="repair_type" id="repair_type" class="form-control mt-1" required>
                                 @foreach ($repairTypes as $repairType)
-                                    <option value="{{ $repairType->id }}">{{ $repairType->name }}</option>
+                                    <option value="{{ $repairType->id }}" {{ $repairType->id == $selectedRepairType ? 'selected' : '' }}>
+                                        {{ $repairType->name }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -29,7 +31,12 @@
                             <label for="description">Opis</label>
                             <textarea class="form-control mt-1" id="description" name="description" rows="3" required></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary mt-3" id="submit_button">Dodaj Naprawę</button>
+                        <div class="form-group mb-3">
+                            <span id="not-available" class="d-none text-danger">Niestety, brak dostępnych terminów na wybraną datę i typ naprawy.</span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <button type="submit" class="btn btn-primary mt-3" id="submit_button">Dodaj Naprawę</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -41,6 +48,7 @@
         var date = document.getElementById('scheduled_date').value;
         var repairType = document.getElementById('repair_type').value;
         var submitButton = document.getElementById('submit_button');
+        var notAvailableMessage = document.getElementById('not-available');
         
         if (date && repairType) {
             submitButton.disabled = true;
@@ -56,17 +64,27 @@
             .then(data => {
                 var timeSelect = document.getElementById('scheduled_time');
                 timeSelect.innerHTML = '';
-                data.forEach(function(time) {
-                    var option = document.createElement('option');
-                    option.value = time;
-                    option.textContent = time;
-                    timeSelect.appendChild(option);
-                });
-                submitButton.disabled = false;
+                if (data.length > 0) {
+                    data.forEach(function(time) {
+                        var option = document.createElement('option');
+                        option.value = time;
+                        option.textContent = time;
+                        timeSelect.appendChild(option);
+                    });
+                    submitButton.disabled = false;
+                    notAvailableMessage.classList.add('d-none');
+                } else {
+                    submitButton.disabled = true;
+                    notAvailableMessage.classList.remove('d-none');
+                }
             })
             .catch(() => {
-                submitButton.disabled = false;
+                submitButton.disabled = true;
+                notAvailableMessage.classList.remove('d-none');
             });
+        } else {
+            submitButton.disabled = true;
+            notAvailableMessage.classList.add('d-none');
         }
     }
 

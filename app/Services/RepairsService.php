@@ -21,38 +21,44 @@ class RepairsService
         $repairs = $repairsQuery->get();
         $repairType = RepairType::find($repairTypeId);
         $repairDuration = $repairType->duration;
-    
+
         $openingHour = 9;
         $closingHour = 17;
-    
+
         $availableTimes = [];
         for ($i = $openingHour; $i < $closingHour; $i++) {
             for ($j = 0; $j < 60; $j += 30) {
-                $time = sprintf('%02d:%02d', $i, $j);
+                $time = \DateTime::createFromFormat('Y-m-d H:i', $date . sprintf(' %02d:%02d', $i, $j));
                 $isAvailable = true;
-                $timeObj = \DateTime::createFromFormat('H:i', $time);
-                $repairEndObj = clone $timeObj;
+                $repairEndObj = clone $time;
                 $repairEndObj->modify("+{$repairDuration} minutes");
-    
+
+                // Ensure the repair end time does not exceed the closing hour
+                if ($repairEndObj->format('Y-m-d H:i') > $date . sprintf(' %02d:00', $closingHour)) {
+                    continue;
+                }
+
                 foreach ($repairs as $repair) {
                     $repairStart = $repair->scheduled_time;
                     $repairStartObj = \DateTime::createFromFormat('H:i:s', $repairStart);
+                    $repairStartObj->setDate($time->format('Y'), $time->format('m'), $time->format('d'));
                     $repairEnd = date('H:i', strtotime($repairStart) + $repair->repairType->duration * 60);
                     $repairEndObjExisting = \DateTime::createFromFormat('H:i', $repairEnd);
-    
-                    if (($timeObj >= $repairStartObj && $timeObj < $repairEndObjExisting) ||
+                    $repairEndObjExisting->setDate($time->format('Y'), $time->format('m'), $time->format('d'));
+
+                    if (($time >= $repairStartObj && $time < $repairEndObjExisting) ||
                         ($repairEndObj > $repairStartObj && $repairEndObj <= $repairEndObjExisting)) {
                         $isAvailable = false;
                         break;
                     }
                 }
-    
-                if ($isAvailable && $repairEndObj->format('H:i') <= sprintf('%02d:00', $closingHour)) {
-                    $availableTimes[] = $time;
+
+                if ($isAvailable) {
+                    $availableTimes[] = $time->format('H:i');
                 }
             }
         }
-    
+
         return $availableTimes;
     }
 

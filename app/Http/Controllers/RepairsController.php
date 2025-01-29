@@ -24,10 +24,14 @@ class RepairsController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
         $repairTypes = RepairType::all();
-        return view('dashboard.repairs.addRepair', ['repairTypes' => $repairTypes]);
+        $selectedRepairType = $request->query('repair_type');
+        return view('dashboard.repairs.addRepair', [
+            'repairTypes' => $repairTypes,
+            'selectedRepairType' => $selectedRepairType
+        ]);
     }
 
     /**
