@@ -21,10 +21,7 @@
                         <a class="nav-link" href="{{ route('home') }}">Strona Główna</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/uslugi">Usługi</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/kontakt">Kontakt</a>
+                        <a class="nav-link" href="{{ route('contact') }}">Kontakt</a>
                     </li>
                     @if(Auth::check() && App\Enums\RolesEnum::isEmployee())
                         <li class="nav-item">

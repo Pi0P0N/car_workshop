@@ -2,10 +2,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const html = document.documentElement;
     const toggle = document.getElementById('toggle-dark-mode');
 
+    let currentTheme = localStorage.getItem('theme') || 'light';
+    html.setAttribute('data-bs-theme', currentTheme);
+
     if (toggle) {
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        html.setAttribute('data-bs-theme', savedTheme);
-        toggle.checked = savedTheme === 'dark';
+        toggle.checked = currentTheme === 'dark';
 
         toggle.addEventListener('change', function () {
             const newTheme = this.checked ? 'dark' : 'light';

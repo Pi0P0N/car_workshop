@@ -28,6 +28,10 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
 
+Route::get('/contact', function () {
+    return view('dashboard.utilities.contact');
+})->name('contact');
+
 Route::middleware(['auth'])->group(function () {
     /**
      * Logged user routes START
