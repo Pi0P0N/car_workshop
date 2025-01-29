@@ -5,7 +5,6 @@
 <div class="card">
     <div class="card-header">Lista Napraw</div>
     <div class="card-body">
-        {{-- previous day, datepicker and next day --}}
         <div class="d-flex justify-content-between mb-3">
             <a href="{{ route('repairs.list', ['date' => $previousDay]) }}" class="btn btn-primary">Poprzedni dzień</a>
             <form action="{{ route('repairs.list') }}" method="GET" id="dateForm">

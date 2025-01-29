@@ -33,7 +33,6 @@ class RepairsService
                 $repairEndObj = clone $time;
                 $repairEndObj->modify("+{$repairDuration} minutes");
 
-                // Ensure the repair end time does not exceed the closing hour
                 if ($repairEndObj->format('Y-m-d H:i') > $date . sprintf(' %02d:00', $closingHour)) {
                     continue;
                 }

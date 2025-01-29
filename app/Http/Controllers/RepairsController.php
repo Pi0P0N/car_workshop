@@ -14,14 +14,6 @@ use App\Http\Requests\UpdateRepairsRequest;
 class RepairsController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
      * Show the form for creating a new resource.
      */
     public function create(Request $request)
@@ -58,7 +50,6 @@ class RepairsController extends Controller
             $repair->status = RepairStatusEnum::Pending;
             $repair->save();
 
-            // Add payment with status 1
             $payment = new \App\Models\Payment();
             $payment->repair_id = $repair->id;
             $payment->employee_id = null;
@@ -86,14 +77,6 @@ class RepairsController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Nie udało się pobrać listy napraw. Proszę spróbować ponownie.');
         }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Repairs $repairs)
-    {
-        //
     }
 
     /**
@@ -162,6 +145,10 @@ class RepairsController extends Controller
             return redirect()->route('repairs.list')->with('error', 'Nie udało się usunąć naprawy. Proszę spróbować ponownie.');
         }
     }
+
+    /**
+     * Get available repair times for a specific date.
+     */
     public function getAvailableRepairTimes(Request $request)
     {
         try {
